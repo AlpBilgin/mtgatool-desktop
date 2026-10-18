@@ -5,6 +5,7 @@ import notFound from "../assets/images/notfound.png";
 import notFoundArt from "../assets/images/notFoundArt.png";
 import { DEFAULT_TILE } from "../constants";
 import { DbCardDataV2 } from "../types";
+import { getCardArtCached } from "./getCardArtCached";
 import isCardDfcBack from "./isCardDfcBack";
 import database from "./mtga/database";
 
@@ -48,9 +49,11 @@ export function getCardImage(
   // this is the old derivation, kept for cards the build could not place and
   // for databases predating art resolution.
   if (cardObj?.Art) {
-    return encodeURI(
-      `https://api.scryfall.com/cards/${cardObj.Art.s}/${cardObj.Art.n}` +
-        `?format=image${isDfc ? `&face=back` : ""}&version=${quality}`
+    return getCardArtCached(
+      encodeURI(
+        `https://api.scryfall.com/cards/${cardObj.Art.s}/${cardObj.Art.n}` +
+          `?format=image${isDfc ? `&face=back` : ""}&version=${quality}`
+      )
     );
   }
 
@@ -98,7 +101,7 @@ export function getCardImage(
     }&format=image${isDfc ? `&face=back` : ""}&version=${quality}`;
   }
 
-  return encodeURI(finalUrl);
+  return getCardArtCached(encodeURI(finalUrl));
 }
 
 export function getCardArtCrop(card: DbCardDataV2 | number): string {
